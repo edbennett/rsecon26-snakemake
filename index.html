@@ -1,17 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 	<head>
-		<meta charset="utf-8" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-		/>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+		<title>Kill your shell scripts: Reproducible workflow management with Snakemake</title>
 
 		<link rel="stylesheet" href="dist/reset.css" />
 		<link rel="stylesheet" href="dist/reveal.css" />
-		<link rel="stylesheet" href="dist/theme/black.css" />
+		<link rel="stylesheet" href="css/theme/sa2c.css" />
 
 		<!-- Theme used for syntax highlighted code -->
 		<link rel="stylesheet" href="dist/plugin/highlight/monokai.css" />
@@ -19,8 +16,39 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section>
+					<h2 style="padding-top: 40px">
+					  Kill your shell scripts:<br>
+                      Reproducible workflow management<br>
+                      with Snakemake
+					</h2>
+					<h3>
+						<a href="https://github.com/edbennett">Ed Bennett</a>
+					</h3>
+					<p style="padding-top: 30px">RSECon26, Sheffield, 2026-09-10</p>
+					<p>Slides: <a href="https://edbennett.github.io/rsecon26-snakemake">https://edbennett.github.io/rsecon26-snakemake</a> • <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY</a><br>
+					<span style="opacity: 50%; font-style: italic;">Press <span style="font-family: monospace; font-style: normal;">S</span> for speaker notes</span></p>
+					<div style="padding-top: 0px;">
+						<a href="https://www.swansea.ac.uk">
+							<img class="plain title-image" src='images/su-vstack-white.svg' alt="Swansea University logo">
+						</a>
+						<a href="https://sa2c.swansea.ac.uk">
+							<img class="plain title-image" src='images/sa2c-white.svg' alt="SA2C logo">
+						</a>
+						<a href="https://telos-collaboration.github.io">
+							<img class="plain title-image" src='images/telos-logo-white.svg' alt="TELOS Collaboration">
+						</a>
+						<a href="https://stfc.ukri.org">
+							<img class="plain title-image" src='images/stfc.svg' alt="Science and Technologies Facilities Council">
+						</a>
+					</div>
+				</section>
+
+				<section data-markdown="slides/slides.md" data-separator="^\r?\n---\r?\n$" data-separator-vertical="^\r?\n-\r?\n$" data-separator-notes="^Notes:"> </section>
+				<section>
+					<h1>Thank you</h1>
+				</section>
+				<section data-markdown="slides/backup.md" data-separator="^\r?\n---\r?\n$" data-separator-vertical="^\r?\n-\r?\n$" data-separator-notes="^Notes:" data-visibility="uncounted"> </section>
 			</div>
 		</div>
 
@@ -34,9 +62,11 @@
 			// - https://revealjs.com/config/
 			Reveal.initialize({
 				hash: true,
-
+				width: 1366,
+				height: 768,
+				// slideNumber: 'c/t',
 				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [RevealMarkdown, RevealHighlight, RevealNotes],
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ],
 			});
 		</script>
 	</body>
