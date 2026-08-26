@@ -557,3 +557,73 @@ open dag.pdf
 
 Notes:
 We can get Snakemake to visualise our whole workflow for us.
+
+-
+
+![Terminal](images/terminal.svg) <!-- .element height="32px" style="margin-bottom: -18px" -->
+
+```shellsession
+snakemake --conda-create-envs-only
+```
+
+<p style="text-align: center; width: 100%; color: lightgrey; font-family: monospace; margin-bottom: -20px; font-size: 24pt">submit_snakemake.sh</p>
+
+```bash
+#!/bin/bash
+#SBATCH --nodes=1
+#SBATCH --exclusive
+
+module load snakemake
+
+snakemake --cores all --use-conda
+```
+
+![Terminal](images/terminal.svg) <!-- .element height="32px" style="margin-bottom: -18px" -->
+
+```shellsession
+sbatch submit_snakemake.sh
+```
+
+Notes:
+If our workflows require more resources than we have locally,
+we can run on a cluster.
+One way to do this is to write a job script.
+Since many clusters don't allow Internet access from compute nodes,
+we can instantiate the Conda environments from the login node in advance.
+This lets us use an entire node,
+but means we have the same resources available throughout the job:
+if there are long serial sections,
+we'll waste resources.
+
+-
+
+<p style="text-align: center; width: 100%; color: lightgrey; font-family: monospace; margin-bottom: -20px; font-size: 24pt">~/.config/snakemake/my-cluster/profile.yaml</p>
+
+```yaml
+executor: slurm
+jobs: 30
+cores: 1080
+software-deployment-method: conda
+default-resources:
+  mem_mb: 4096
+  slurm_account: my-project
+```
+
+![Terminal](images/terminal.svg) <!-- .element height="32px" style="margin-bottom: -18px" -->
+
+```shellsession
+pip install snakemake-executor-plugin-slurm
+snakemake --profile my-cluster
+```
+
+Notes:
+Alternatively,
+we can use the Slurm executor plugin for Snakemake
+to have Snakemake submit jobs for each step in the workflow.
+This avoids wasting resources,
+and can be much faster if there is are highly parallel sections to the workflow,
+but requires a long-running process on the login node
+while waiting for jobs to execute,
+or having jobs that submit other jobs.
+Some HPC centers object to one or both of these,
+so speak proactively with your sysadmins to avoid causing disruption.
