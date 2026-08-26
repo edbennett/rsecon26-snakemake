@@ -227,6 +227,8 @@ and the one I'm going to demo today.
 Based on data and code at
 [doi:10.5281/zenodo.17308706](https://doi.org/10.5281/zenodo.17308706)
 
+[Follow the shell session: bit.ly/rsecon26-snakemake](https://asciinema.org/s/KKcvrQQ3unm5q6Vk)
+
 -
 
 <p style="text-align: center; width: 100%; color: lightgrey; font-family: monospace; margin-bottom: -20px; font-size: 24pt">workflow/Snakefile</p>
