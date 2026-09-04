@@ -62,7 +62,9 @@ done
 for tool in tool1 tool2
 do
     collate_outputs \
-      $(for filename in ${input_fileset}; do output_filename ${filename} ${tool}; done | tr '\n' ' ') \
+      $(for filename in ${input_fileset}; do
+          output_filename ${filename} ${tool}
+      done | tr '\n' ' ') \
       output_${tool}.h5
 done
 
@@ -314,14 +316,14 @@ rule avg_plaquette:
 ![Terminal](images/terminal.svg) <!-- .element height="32px" style="margin-bottom: -18px" -->
 
 ```shellsession
-snakemake --cores 1 --software-deployment-method conda intermediary_data/beta2.0/pg.plaquette.json.gz
+snakemake --cores 1 --software-deployment-method=conda intermediary_data/beta2.0/pg.plaquette.json.gz
 ```
 
 Notes:
 Let's define another rule that makes use of the environment we've defined.
 To specify which environment to use for a rule,
 we add the `conda:` block to the rule definition.
-We also need to add the `--software-deployment-method conda` option
+We also need to add the `--software-deployment-method=conda` option
 in order to tell Snakemake to observe the `conda:` directives.
 Snakemake can also use Apptainer or environment modules
 as its software deployment method;
@@ -343,8 +345,9 @@ rule avg_plaquette:
 ![Terminal](images/terminal.svg) <!-- .element height="32px" style="margin-bottom: -18px" -->
 
 ```shellsession
-snakemake --cores 1 --software-deployment-method conda intermediary_data/beta2.0/pg.plaquette.json.gz
-snakemake --cores 1 --software-deployment-method conda intermediary_data/beta2.2/pg.plaquette.json.gz
+snakemake --cores 1 --software-deployment-method=conda \
+    intermediary_data/beta2.0/pg.plaquette.json.gz \
+    intermediary_data/beta2.2/pg.plaquette.json.gz
 ```
 
 Notes:
@@ -387,7 +390,7 @@ rule plot_avg_plaquette:
 ![Terminal](images/terminal.svg) <!-- .element height="32px" style="margin-bottom: -18px" -->
 
 ```shellsession
-snakemake --cores 6 --software-deployment-method conda assets/plots/plaquette_scan.pdf
+snakemake --cores 6 --software-deployment-method=conda assets/plots/plaquette_scan.pdf
 ```
 
 Notes:
@@ -410,7 +413,7 @@ so we get the result more quickly than if we had to loop them one after another.
 
 ```yaml
 W0_reference: 0.2
-metadata: metadata/ensembles.csv
+metadata: metadata/ensemble_metadata.csv
 ```
 
 
@@ -432,7 +435,7 @@ rule w0:
 ![Terminal](images/terminal.svg) <!-- .element height="32px" style="margin-bottom: -18px" -->
 
 ```shellsession
-snakemake --cores 6 --software-deployment-method conda intermediary_data/beta2.0/wflow.w0.json.gz
+snakemake --cores 6 --software-deployment-method=conda intermediary_data/beta2.0/wflow.w0.json.gz
 ```
 
 Notes:
@@ -465,7 +468,7 @@ rule ps_mass:
 ![Terminal](images/terminal.svg) <!-- .element height="32px" style="margin-bottom: -18px" -->
 
 ```shellsession
-snakemake --cores 6 --software-deployment-method conda intermediary_data/beta2.0/corr.ps_mass.json.gz
+snakemake --cores 6 --software-deployment-method=conda intermediary_data/beta2.0/corr.ps_mass.json.gz
 ```
 
 Notes:
@@ -483,12 +486,22 @@ but doesn't check the disk for them.
 <p style="text-align: center; width: 100%; color: lightgrey; font-family: monospace; margin-bottom: -20px; font-size: 24pt">workflow/Snakefile</p>
 
 ```snakemake
+# We now need to use consistent wildcards in this rule with those below
+rule avg_plaquette:
+    input: "raw_data/beta{beta}/out_pg"
+    output: "intermediary_data/beta{beta}/pg.plaquette.json.gz"
+    conda: "envs/analysis.yml"
+    shell:
+        "python -m su2pg_analysis.plaquette {input} --output_file {output}"
+
+...
+
 rule one_loop_matching:
     input:
         plaquette=rules.avg_plaquette.output,
         meson=rules.ps_mass.output,
     output:
-        data="intermediary_data/{subdir}/pg.corr.ps_decay_const.json.gz",
+        data="intermediary_data/beta{beta}/pg.corr.ps_decay_const.json.gz",
     conda: "envs/analysis.yml"
     shell:
         "python -m su2pg_analysis.one_loop_matching --plaquette_data {input.plaquette} --spectral_observable_data {input.meson} --output_filename {output.data}"
@@ -497,7 +510,7 @@ rule one_loop_matching:
 ![Terminal](images/terminal.svg) <!-- .element height="32px" style="margin-bottom: -18px" -->
 
 ```shellsession
-snakemake --cores 6 --software-deployment-method conda intermediary_data/beta2.0/corr.ps_decay_const.json.gz
+snakemake --cores 6 --software-deployment-method=conda intermediary_data/beta2.0/corr.ps_decay_const.json.gz
 ```
 
 Notes:
@@ -528,15 +541,15 @@ rule spectrum:
     output:
         plot="assets/plots/spectrum.pdf",
     conda: "envs/analysis.yml"
-    shell:
-        "python {input.script} {input.ps_mass} {input.ps_decay_const} --y_observable f_ps --zero_y_axis --zero_x_axis --output_file {output.plot} --plot_styles {config[plot_styles]}"
     default_target: True
+    shell:
+        "python {input.script} {input.ps_mass} {input.ps_decay_const} --y_observable f_ps --zero_y_axis --zero_x_axis --output_file {output.plot}"
 ```
 
 ![Terminal](images/terminal.svg) <!-- .element height="32px" style="margin-bottom: -18px" -->
 
 ```shellsession
-snakemake --cores 6 --software-deployment-method conda
+snakemake --cores 6 --software-deployment-method=conda
 ```
 
 Notes:
@@ -575,7 +588,7 @@ snakemake --conda-create-envs-only
 
 module load snakemake
 
-snakemake --cores all --use-conda
+snakemake --cores all --software-deployment-method=conda
 ```
 
 ![Terminal](images/terminal.svg) <!-- .element height="32px" style="margin-bottom: -18px" -->
