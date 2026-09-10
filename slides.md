@@ -510,7 +510,7 @@ rule one_loop_matching:
 ![Terminal](images/terminal.svg) <!-- .element height="32px" style="margin-bottom: -18px" -->
 
 ```shellsession
-snakemake --cores 6 --software-deployment-method=conda intermediary_data/beta2.0/corr.ps_decay_const.json.gz
+snakemake --cores 6 --software-deployment-method=conda intermediary_data/beta2.0/pg.corr.ps_decay_const.json.gz
 ```
 
 Notes:
